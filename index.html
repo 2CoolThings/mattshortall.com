@@ -79,19 +79,19 @@
         <button onclick="checkPassword()">ENTER</button>
     </div>
     <div id="content">
-        <h1>WELCOME IN, Y'ALL</h1>
-        <h2>MATT SHORTALL</h2>
+        <h1>Hey, yall</h1>
+        <h2>Welcome in.</h2>
         <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">RESUME</a>
-        <a href="snake.html">GATOR SNAKE</a>
+        <a href="snake.html">GAME</a>
     </div>
     <script>
         function checkPassword() {
             const pass = document.getElementById('pass').value.toUpperCase();
-            if (pass === "PASSWORD123") {
+            if (pass === "gatorsnake") {
                 document.getElementById('login').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
             } else {
-                alert('INCORRECT PASSWORD');
+                alert('I'm sorry. That is not correct.');
             }
         }
         document.getElementById('pass').addEventListener('keypress', function(e) {
