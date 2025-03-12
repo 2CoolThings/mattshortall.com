@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MATT SHORTALL - HOME RUN DERBY">
+    <title>BASEBALL | MATT SHORTALL</title>
+    <style>
+        body {
+            background: #636f65;
+            color: #F0EAD6;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        canvas {
+            border: 2px solid #4a5c4f;
+            background: #4a5c4f;
+        }
+        h1 {
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        p {
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+        a {
+            color: #F0EAD6;
+            text-decoration: none;
+            padding: 5px;
+            border-bottom: 1px dashed #4a5c4f;
+        }
+        a:hover {
+            text-decoration: underline;
+            background: #4a5c4f;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(97, 111, 101, 0.1), rgba(97, 111, 101, 0.1));
+            opacity: 0.3;
+            pointer-events: none;
+            animation: flicker 0.2s infinite;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.4; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <h1>BASEBALL</h1>
+    <p>SCORE: <span id="score">0</span></p>
+    <p>SWING WITH SPACEBAR (TIMING MATTERS)</p>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <p>DISTANCE: <span id="distance">0</span> FT</p>
+    <a href="index.html">BACK TO MAIN</a>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let ball = { x: 300, y: 50, radius: 5, dx: 0, dy: 2 };
+        let bat = { x: 250, y: 350, width: 100, height: 10, swinging: false };
+        let distance = 0;
+        let gameActive = true;
+        let lastSwingTime = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !bat.swinging && gameActive && Date.now() - lastSwingTime > 1000) {
+                bat.swinging = true;
+                lastSwingTime = Date.now();
+            }
+        });
+
+        function drawGame() {
+            ctx.fillStyle = '#4a5c4f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw field
+            ctx.fillStyle = '#3a4a3f';
+            ctx.fillRect(0, 200, canvas.width, canvas.height - 200);
+
+            // Draw ball
+            ctx.fillStyle = '#F0EAD6';
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw bat
+            ctx.fillStyle = '#F0EAD6';
+            ctx.fillRect(bat.x, bat.y, bat.width, bat.height);
+
+            // Move ball
+            if (gameActive) {
+                ball.y += ball.dy;
+                if (ball.y > canvas.height) {
+                    ball.y = 50;
+                    ball.dy = 2 + Math.random() * 1; // Vary pitch speed
+                    distance = 0;
+                    document.getElementById('distance').textContent = distance;
+                    bat.swinging = false;
+                }
+
+                // Check for hit (timing-based)
+                if (bat.swinging && ball.y + ball.radius > bat.y && ball.y - ball.radius < bat.y + bat.height &&
+                    ball.x > bat.x && ball.x < bat.x + bat.width && ball.dy > 1) {
+                    ball.dy = -8 - Math.random() * 2; // Stronger hit
+                    ball.dx = (Math.random() - 0.5) * 6;
+                    bat.swinging = false;
+                }
+
+                // Ball in flight
+                if (ball.dy < 0) {
+                    ball.x += ball.dx;
+                    distance = Math.floor((canvas.height - ball.y) * 2.5); // Adjusted for more dynamic distance
+                    document.getElementById('distance').textContent = distance;
+                    if (ball.y < 0 || ball.x < 0 || ball.x > canvas.width) {
+                        const points = distance > 400 ? distance * 2 : distance;
+                        score += points;
+                        document.getElementById('score').textContent = score;
+                        if (distance > 400) alert('HOME RUN! ' + distance + ' FT!');
+                        ball.y = 50;
+                        ball.dy = 2 + Math.random() * 1;
+                        ball.dx = 0;
+                        distance = 0;
+                        document.getElementById('distance').textContent = distance;
+                    }
+                }
+            }
+
+            requestAnimationFrame(drawGame);
+        }
+
+        drawGame();
+    </script>
+</body>
+</html>
