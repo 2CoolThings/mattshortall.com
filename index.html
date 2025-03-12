@@ -3,66 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Matt Shortall - Private Access">
-    <title>Matt Shortall</title>
+    <meta name="description" content="MATT SHORTALL - PRIVATE ACCESS SITE">
+    <title>MATT SHORTALL | PRIVATE ACCESS</title>
     <style>
         body {
-            background: #000;
-            color: #fff;
+            background: #003300; /* Extremely dark green */
+            color: #E0E0E0; /* Softer white for retro glow */
             font-family: 'Courier New', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            text-transform: uppercase; /* Ensures all text is uppercase */
         }
         #login, #content {
             text-align: center;
+            padding: 20px; /* Adds structural padding for retro frame */
+            border: 2px solid #4CAF50; /* Green border for terminal effect */
+            background: #002200; /* Slightly lighter green for inner panel */
         }
         input, button {
-            background: #222;
-            color: #fff;
-            border: 1px solid #fff;
+            background: #002200;
+            color: #E0E0E0;
+            border: 1px solid #4CAF50;
             padding: 10px;
             font-family: 'Courier New', monospace;
+            text-transform: uppercase; /* Uppercase input and button text */
+            width: 200px; /* Fixed width for structural look */
+            margin: 5px 0;
         }
         button:hover {
-            background: #444;
+            background: #003300;
             cursor: pointer;
         }
         a {
-            color: #fff;
+            color: #E0E0E0;
             text-decoration: none;
             display: block;
             margin: 10px 0;
+            padding: 5px; /* Padding for link blocks */
+            border-bottom: 1px dashed #4CAF50; /* Dashed line for retro separation */
         }
         a:hover {
             text-decoration: underline;
+            background: #002200;
         }
         #content {
             display: none;
+        }
+        /* Add a subtle scanline effect for retro CRT vibe */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 51, 0, 0.1), rgba(0, 51, 0, 0.1));
+            opacity: 0.5;
+            pointer-events: none;
+            animation: scanlines 0.1s infinite;
+        }
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(5px); }
         }
     </style>
 </head>
 <body>
     <div id="login">
-        <input type="password" id="pass" placeholder="password">
-        <button onclick="checkPassword()">enter</button>
+        <input type="password" id="pass" placeholder="PASSWORD">
+        <button onclick="checkPassword()">ENTER</button>
     </div>
     <div id="content">
-        <h1>matt shortall</h1>
-        <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">resume</a>
-        <a href="https://docs.google.com/document/d/1ua-eiRu4nXO9loSf8wkL9TcCR0f7yO-jC58fNW3hpwo/edit?usp=sharing" target="_blank">notes</a>
-        <a href="https://youtu.be/oOHI7uFqU6c" target="_blank">video</a>
+        <h1>MATT SHORTALL</h1>
+        <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">RESUME</a>
+        <a href="https://docs.google.com/document/d/1ua-eiRu4nXO9loSf8wkL9TcCR0f7yO-jC58fNW3hpwo/edit?usp=sharing" target="_blank">NOTES</a>
+        <a href="https://youtu.be/oOHI7uFqU6c" target="_blank">VIDEO</a>
     </div>
     <script>
         function checkPassword() {
-            const pass = document.getElementById('pass').value;
-            if (pass === "password") {
+            const pass = document.getElementById('pass').value.toUpperCase(); // Convert input to uppercase
+            if (pass === "PASSWORD") {
                 document.getElementById('login').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
+                document.getElementId('content').style.display = 'block';
             } else {
-                alert('incorrect password');
+                alert('INCORRECT PASSWORD');
             }
         }
         document.getElementById('pass').addEventListener('keypress', function(e) {
