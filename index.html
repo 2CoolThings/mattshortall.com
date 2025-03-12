@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MATT SHORTALL - PRIVATE ACCESS SITE">
+    <meta name="description" content="MATT SHORTALL - PRIVATE ACCESS SITE | NEW ORLEANS, NEW YORK, PIANO, BASEBALL">
     <title>MATT SHORTALL | PRIVATE ACCESS</title>
     <style>
         body {
@@ -79,19 +79,24 @@
         <button onclick="checkPassword()">ENTER</button>
     </div>
     <div id="content">
-        <h1>Hey, yall</h1>
-        <h2>Welcome in.</h2>
+        <h1>WELCOME IN, Y'ALL</h1>
+        <h2>MATT SHORTALL</h2>
         <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">RESUME</a>
-        <a href="snake.html">GAME</a>
+        <a href="neworleans.html">NEW ORLEANS</a>
+        <a href="newyork.html">NEW YORK</a>
+        <a href="baseball.html">BASEBALL</a>
+        <a href="snakes.html">GATOR SNAKE</a>
+        <a href="piano.html">PIANO</a>
+        <a href="https://www.musictheory.net/lessons/51" target="_blank">CIRCLE OF FIFTHS</a>
     </div>
     <script>
         function checkPassword() {
             const pass = document.getElementById('pass').value.toUpperCase();
-            if (pass === "gatorsnake") {
+            if (pass === "PIANO2025") { // Updated to reflect your piano passion
                 document.getElementById('login').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
             } else {
-                alert('I'm sorry. That is not correct.');
+                alert('INCORRECT PASSWORD');
             }
         }
         document.getElementById('pass').addEventListener('keypress', function(e) {
