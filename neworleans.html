@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MATT SHORTALL - NEW ORLEANS FROGGER">
+    <title>NEW ORLEANS | MATT SHORTALL</title>
+    <style>
+        body {
+            background: #636f65;
+            color: #F0EAD6;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        canvas {
+            border: 2px solid #4a5c4f;
+            background: #4a5c4f;
+        }
+        h1 {
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        p {
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+        a {
+            color: #F0EAD6;
+            text-decoration: none;
+            padding: 5px;
+            border-bottom: 1px dashed #4a5c4f;
+        }
+        a:hover {
+            text-decoration: underline;
+            background: #4a5c4f;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(97, 111, 101, 0.1), rgba(97, 111, 101, 0.1));
+            opacity: 0.3;
+            pointer-events: none;
+            animation: flicker 0.2s infinite;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.4; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <h1>NEW ORLEANS</h1>
+    <p>SCORE: <span id="score">0</span></p>
+    <p>PRESS SPACE TO JUMP</p>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <a href="index.html">BACK TO MAIN</a>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let runner = { x: 50, y: 300, vy: 0, jumping: false };
+        let obstacles = [];
+        let items = [];
+        let gameActive = true;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !runner.jumping && gameActive) {
+                runner.vy = -10;
+                runner.jumping = true;
+            }
+        });
+
+        function spawnObstacle() {
+            obstacles.push({ x: canvas.width, y: 300, width: 40, height: 20 });
+        }
+
+        function spawnItem() {
+            const types = ['🦐', '🍺', '🎭'];
+            items.push({
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 100) + 200,
+                type: types[Math.floor(Math.random() * types.length)]
+            });
+        }
+
+        function drawGame() {
+            if (!gameActive) return;
+
+            ctx.fillStyle = '#4a5c4f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw runner
+            ctx.font = '20px Arial';
+            ctx.fillText('🏃', runner.x - 10, runner.y + 5);
+
+            // Draw obstacles (potholes)
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= 3;
+                ctx.font = '20px Arial';
+                ctx.fillText('🕳️', obstacle.x + 10, obstacle.y + 5);
+
+                // Check collision
+                if (runner.x + 20 > obstacle.x && runner.x < obstacle.x + obstacle.width &&
+                    runner.y + 20 > obstacle.y && runner.y < obstacle.y + obstacle.height) {
+                    gameActive = false;
+                    alert('GAME OVER! HIT A POTHOLE! SCORE: ' + score);
+                    window.location.reload();
+                }
+
+                if (obstacle.x + obstacle.width < 0) obstacles.splice(index, 1);
+            });
+
+            // Draw items
+            items.forEach((item, index) => {
+                item.x -= 3;
+                ctx.font = '20px Arial';
+                ctx.fillText(item.type, item.x, item.y + 5);
+
+                // Check item collection
+                if (runner.x + 20 > item.x && runner.x < item.x + 20 &&
+                    runner.y + 20 > item.y && runner.y < item.y + 20) {
+                    items.splice(index, 1);
+                    score += item.type === '🦐' ? 10 : item.type === '🍺' ? 15 : 20;
+                    document.getElementById('score').textContent = score;
+                }
+
+                if (item.x < 0) items.splice(index, 1);
+            });
+
+            // Runner physics
+            runner.vy += 0.5;
+            runner.y += runner.vy;
+            if (runner.y > 300) {
+                runner.y = 300;
+                runner.vy = 0;
+                runner.jumping = false;
+            }
+
+            // Spawn new obstacles and items
+            if (Math.random() < 0.02) spawnObstacle();
+            if (Math.random() < 0.01) spawnItem();
+
+            // Update score
+            score++;
+            document.getElementById('score').textContent = score;
+
+            requestAnimationFrame(drawGame);
+        }
+
+        drawGame();
+    </script>
+</body>
+</html>
