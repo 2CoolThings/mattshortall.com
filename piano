@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MATT SHORTALL - PIANO CHORD CHALLENGE">
+    <title>PIANO | MATT SHORTALL</title>
+    <style>
+        body {
+            background: #636f65;
+            color: #F0EAD6;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        canvas {
+            border: 2px solid #4a5c4f;
+            background: #4a5c4f;
+        }
+        h1 {
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        p {
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+        a {
+            color: #F0EAD6;
+            text-decoration: none;
+            padding: 5px;
+            border-bottom: 1px dashed #4a5c4f;
+        }
+        a:hover {
+            text-decoration: underline;
+            background: #4a5c4f;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(97, 111, 101, 0.1), rgba(97, 111, 101, 0.1));
+            opacity: 0.3;
+            pointer-events: none;
+            animation: flicker 0.2s infinite;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.4; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <h1>PIANO</h1>
+    <p>SCORE: <span id="score">0</span></p>
+    <p>MATCH THE CHORD: <span id="currentChord"></span></p>
+    <canvas id="gameCanvas" width="600" height="200"></canvas>
+    <p>CLICK KEYS TO MATCH CHORD</p>
+    <a href="index.html">BACK TO MAIN</a>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let currentChord = '';
+        const chords = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'Db', 'Ab', 'Eb', 'Bb', 'F'];
+        let gameActive = true;
+        const keys = [];
+        const keyWidth = 40;
+        const keyHeight = 100;
+        const blackKeyWidth = 25;
+        const blackKeyHeight = 60;
+
+        // Define piano keys (simplified to 12 white keys for major chords, with black keys for visual)
+        for (let i = 0; i < 12; i++) {
+            keys.push({
+                x: i * keyWidth,
+                y: 100,
+                width: keyWidth,
+                height: keyHeight,
+                isBlack: false,
+                chord: chords[i],
+                highlighted: false
+            });
+        }
+        // Add black keys for visual effect (simplified pattern)
+        const blackKeyPositions = [0.5, 1.5, 3.5, 4.5, 5.5, 7.5, 8.5, 10.5, 11.5];
+        blackKeyPositions.forEach(pos => {
+            keys.push({
+                x: pos * keyWidth - blackKeyWidth / 2,
+                y: 100,
+                width: blackKeyWidth,
+                height: blackKeyHeight,
+                isBlack: true,
+                highlighted: false
+            });
+        });
+
+        function newChord() {
+            currentChord = chords[Math.floor(Math.random() * chords.length)];
+            document.getElementById('currentChord').textContent = currentChord;
+        }
+
+        canvas.addEventListener('click', (e) => {
+            if (!gameActive) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            keys.forEach(key => {
+                if (x > key.x && x < key.x + key.width && y > key.y && y < key.y + key.height && !key.isBlack) {
+                    if (key.chord === currentChord) {
+                        score += 10;
+                        document.getElementById('score').textContent = score;
+                        key.highlighted = true;
+                        setTimeout(() => {
+                            key.highlighted = false;
+                            newChord();
+                        }, 500);
+                    } else {
+                        gameActive = false;
+                        alert('WRONG CHORD! GAME OVER! SCORE: ' + score);
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+
+        function drawGame() {
+            ctx.fillStyle = '#4a5c4f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw piano keys
+            keys.forEach(key => {
+                ctx.fillStyle = key.isBlack ? '#3a4a3f' : key.highlighted ? '#5a6b5f' : '#F0EAD6';
+                ctx.fillRect(key.x, key.y, key.width, key.height);
+                if (!key.isBlack) {
+                    ctx.fillStyle = '#4a5c4f';
+                    ctx.font = '12px Arial';
+                    ctx.fillText(key.chord, key.x + 10, key.y + key.height - 10);
+                }
+            });
+
+            // Draw Circle of Fifths diagram (simplified visual)
+            ctx.fillStyle = '#F0EAD6';
+            ctx.beginPath();
+            ctx.arc(300, 50, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#4a5c4f';
+            ctx.font = '14px Arial';
+            ctx.fillText('CIRCLE OF FIFTHS', 260, 50);
+            const angleStep = (2 * Math.PI) / 12;
+            chords.forEach((chord, i) => {
+                const x = 300 + 50 * Math.cos(i * angleStep - Math.PI / 2);
+                const y = 50 + 50 * Math.sin(i * angleStep - Math.PI / 2);
+                ctx.fillStyle = '#F0EAD6';
+                ctx.fillText(chord, x - 10, y + 5);
+            });
+
+            requestAnimationFrame(drawGame);
+        }
+
+        newChord();
+        drawGame();
+    </script>
+</body>
+</html>
