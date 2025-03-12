@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Matt Shortall - Private Access">
+    <title>Matt Shortall</title>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #login, #content {
+            text-align: center;
+        }
+        input, button {
+            background: #222;
+            color: #fff;
+            border: 1px solid #fff;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+        }
+        button:hover {
+            background: #444;
+            cursor: pointer;
+        }
+        a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="login">
+        <input type="password" id="pass" placeholder="password">
+        <button onclick="checkPassword()">enter</button>
+    </div>
+    <div id="content">
+        <h1>matt shortall</h1>
+        <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">resume</a>
+        <a href="https://docs.google.com/document/d/1ua-eiRu4nXO9loSf8wkL9TcCR0f7yO-jC58fNW3hpwo/edit?usp=sharing" target="_blank">notes</a>
+        <a href="https://youtu.be/oOHI7uFqU6c" target="_blank">video</a>
+    </div>
+    <script>
+        function checkPassword() {
+            const pass = document.getElementById('pass').value;
+            if (pass === "password") {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+            } else {
+                alert('incorrect password');
+            }
+        }
+        document.getElementById('pass').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+    </script>
+</body>
+</html>
