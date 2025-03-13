@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MATT SHORTALL - PRIVATE ACCESS SITE | NEW ORLEANS, NEW YORK, PIANO, BASEBALL">
+    <meta name="description" content="MATT SHORTALL - PRIVATE ACCESS SITE | GATOR SNAKE, RESUME">
     <title>MATT SHORTALL | PRIVATE ACCESS</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         body {
-            background: #636f65;
-            color: #F0EAD6;
-            font-family: 'Courier New', monospace;
+            background: #003900;
+            color: #FFFDD8;
+            font-family: 'VT323', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,35 +22,35 @@
         #login, #content {
             text-align: center;
             padding: 20px;
-            border: 2px solid #4a5c4f;
+            border: 2px solid #004d00; /* Slightly lighter green for border */
         }
         input, button {
-            background: #4a5c4f;
-            color: #F0EAD6;
-            border: 1px solid #4a5c4f;
+            background: #004d00;
+            color: #FFFDD8;
+            border: 1px solid #004d00;
             padding: 10px;
-            font-family: 'Courier New', monospace;
+            font-family: 'VT323', monospace;
             text-transform: uppercase;
             width: 200px;
             margin: 10px 0;
             letter-spacing: 2px;
         }
         button:hover {
-            background: #5a6b5f;
+            background: #006600; /* Brighter green on hover */
             cursor: pointer;
         }
         a {
-            color: #F0EAD6;
+            color: #FFFDD8;
             text-decoration: none;
             display: block;
             margin: 15px 0;
             padding: 5px;
-            border-bottom: 1px dashed #4a5c4f;
+            border-bottom: 1px dashed #004d00;
             font-size: 18px;
         }
         a:hover {
             text-decoration: underline;
-            background: #4a5c4f;
+            background: #004d00;
         }
         #content {
             display: none;
@@ -61,7 +62,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(97, 111, 101, 0.1), rgba(97, 111, 101, 0.1));
+            background: linear-gradient(to bottom, rgba(0, 57, 0, 0.1), rgba(0, 57, 0, 0.1));
             opacity: 0.3;
             pointer-events: none;
             animation: flicker 0.2s infinite;
@@ -82,17 +83,12 @@
         <h1>WELCOME IN, Y'ALL</h1>
         <h2>MATT SHORTALL</h2>
         <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">RESUME</a>
-        <a href="neworleans.html">NEW ORLEANS</a>
-        <a href="newyork.html">NEW YORK</a>
-        <a href="baseball.html">BASEBALL</a>
         <a href="snakes.html">GATOR SNAKE</a>
-        <a href="piano.html">PIANO</a>
-        <a href="https://www.musictheory.net/lessons/51" target="_blank">CIRCLE OF FIFTHS</a>
     </div>
     <script>
         function checkPassword() {
             const pass = document.getElementById('pass').value.toUpperCase();
-            if (pass === "PIANO2025") { // Updated to reflect your piano passion
+            if (pass === "GATORSNAKE") {
                 document.getElementById('login').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
             } else {
