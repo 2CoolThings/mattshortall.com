@@ -2,152 +2,229 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MATT SHORTALL - GATOR SNAKE GAME">
-    <title>GATOR SNAKE | MATT SHORTALL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Alligator Crawfish Game</title>
     <style>
         body {
-            background: #636f65;
-            color: #F0EAD6;
-            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-transform: uppercase;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
-        canvas {
-            border: 2px solid #4a5c4f;
-            background: #4a5c4f;
+        #gameContainer {
+            position: relative;
+            width: 90vw;
+            height: 90vh;
+            max-width: 800px;
+            max-height: 800px;
         }
-        h1 {
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-        p {
-            margin: 10px 0;
-            letter-spacing: 1px;
-        }
-        a {
-            color: #F0EAD6;
-            text-decoration: none;
-            padding: 5px;
-            border-bottom: 1px dashed #4a5c4f;
-        }
-        a:hover {
-            text-decoration: underline;
-            background: #4a5c4f;
-        }
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
+        #gameCanvas {
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(97, 111, 101, 0.1), rgba(97, 111, 101, 0.1));
-            opacity: 0.3;
-            pointer-events: none;
-            animation: scanlines 0.1s infinite;
+            background-color: #87CEEB;
+            border: 2px solid #333;
+            display: block;
         }
-        @keyframes scanlines {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(5px); }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #333;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <h1>GATOR SNAKE</h1>
-    <p>SCORE: <span id="score">0</span></p>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <p>USE ARROW KEYS TO MOVE</p>
-    <a href="index.html">BACK TO MAIN</a>
+    <div id="gameContainer">
+        <div id="score">Score: 0</div>
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const gridSize = 20;
-        const tileCount = canvas.width / gridSize;
-        let snake = [
-            { x: 10, y: 10 },
-        ];
-        let food = { x: 15, y: 15 };
-        let dx = 0;
-        let dy = 0;
-        let score = 0;
-
-        document.addEventListener('keydown', changeDirection);
-
-        function changeDirection(event) {
-            const LEFT = 37, UP = 38, RIGHT = 39, DOWN = 40;
-            if (event.keyCode === LEFT && dx !== 1) { dx = -1; dy = 0; }
-            if (event.keyCode === UP && dy !== 1) { dx = 0; dy = -1; }
-            if (event.keyCode === RIGHT && dx !== -1) { dx = 1; dy = 0; }
-            if (event.keyCode === DOWN && dy !== -1) { dx = 0; dy = 1; }
-        }
-
-        function drawGame() {
-            // Move snake
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            snake.unshift(head);
-
-            // Check if snake eats food
-            if (head.x === food.x && head.y === food.y) {
-                score += 10;
-                document.getElementById('score').textContent = score;
-                food.x = Math.floor(Math.random() * tileCount);
-                food.y = Math.floor(Math.random() * tileCount);
-            } else {
-                snake.pop();
-            }
-
-            // Check for collision with walls
-            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                alert('GAME OVER! SCORE: ' + score);
-                resetGame();
+        (function () {
+            // Game elements
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const scoreDisplay = document.getElementById('score');
+            if (!canvas || !ctx || !scoreDisplay) {
+                alert('Error: Game cannot load properly.');
                 return;
             }
 
-            // Check for collision with self
-            for (let i = 1; i < snake.length; i++) {
-                if (head.x === snake[i].x && head.y === snake[i].y) {
-                    alert('GAME OVER! SCORE: ' + score);
-                    resetGame();
-                    return;
-                }
+            // Game constants
+            const GRID_COUNT = 20;
+            const ALLIGATOR = '🐊';
+            const CRAWFISH = '🦐';
+            let gridSize;
+
+            // Game state
+            let snake = [{ x: 10, y: 10 }];
+            let food = { x: 15, y: 15 };
+            let dx = 0;
+            let dy = 0;
+            let score = 0;
+            let gameSpeed = 100;
+            let gameLoop = null;
+
+            // Resize canvas to fit container
+            function resizeCanvas() {
+                const container = document.getElementById('gameContainer');
+                const size = Math.min(container.clientWidth, container.clientHeight);
+                canvas.width = size;
+                canvas.height = size;
+                gridSize = size / GRID_COUNT;
+                draw(); // Redraw after resize
             }
 
-            // Clear canvas
-            ctx.fillStyle = '#4a5c4f';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Initial setup
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('orientationchange', resizeCanvas);
+            resizeCanvas();
 
-            // Draw food (marshmallow)
-            ctx.font = gridSize + 'px Arial';
-            ctx.fillText('🍬', food.x * gridSize, (food.y + 1) * gridSize);
+            // Utility: Random position
+            function randomPos() {
+                return Math.floor(Math.random() * GRID_COUNT);
+            }
 
-            // Draw snake (alligators)
-            snake.forEach(segment => {
-                ctx.font = gridSize + 'px Arial';
-                ctx.fillText('🐊', segment.x * gridSize, (segment.y + 1) * gridSize);
+            // Draw game state
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw snake
+                snake.forEach(segment => {
+                    ctx.font = `${gridSize * 0.8}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(ALLIGATOR, segment.x * gridSize + gridSize / 2, segment.y * gridSize + gridSize / 2);
+                });
+
+                // Draw food
+                ctx.font = `${gridSize * 0.8}px Arial`;
+                ctx.fillText(CRAWFISH, food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2);
+            }
+
+            // Move snake
+            function move() {
+                const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+                // Wall collision
+                if (head.x < 0 || head.x >= GRID_COUNT || head.y < 0 || head.y >= GRID_COUNT) {
+                    gameOver();
+                    return;
+                }
+
+                // Self collision
+                if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                    gameOver();
+                    return;
+                }
+
+                snake.unshift(head);
+
+                // Check food collision
+                if (head.x === food.x && head.y === food.y) {
+                    score += 10;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    food = { x: randomPos(), y: randomPos() };
+                    gameSpeed = Math.max(50, gameSpeed - 2); // Speed up
+                    clearInterval(gameLoop);
+                    gameLoop = setInterval(gameStep, gameSpeed);
+                } else {
+                    snake.pop();
+                }
+
+                draw();
+            }
+
+            // Game step
+            function gameStep() {
+                move();
+            }
+
+            // Game over
+            function gameOver() {
+                clearInterval(gameLoop);
+                alert(`Game Over! Final Score: ${score}`);
+                resetGame();
+            }
+
+            // Reset game
+            function resetGame() {
+                snake = [{ x: 10, y: 10 }];
+                food = { x: 15, y: 15 };
+                dx = 0;
+                dy = 0;
+                score = 0;
+                gameSpeed = 100;
+                scoreDisplay.textContent = `Score: ${score}`;
+                if (gameLoop) clearInterval(gameLoop);
+                gameLoop = setInterval(gameStep, gameSpeed);
+                draw();
+            }
+
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                e.preventDefault(); // Prevent scrolling
+                switch (e.key) {
+                    case 'ArrowUp':
+                        if (dy === 0) { dx = 0; dy = -1; }
+                        break;
+                    case 'ArrowDown':
+                        if (dy === 0) { dx = 0; dy = 1; }
+                        break;
+                    case 'ArrowLeft':
+                        if (dx === 0) { dx = -1; dy = 0; }
+                        break;
+                    case 'ArrowRight':
+                        if (dx === 0) { dx = 1; dy = 0; }
+                        break;
+                }
             });
 
-            // Continue game loop
-            setTimeout(drawGame, 100);
-        }
+            // Touch controls
+            let touchStartX = 0;
+            let touchStartY = 0;
 
-        function resetGame() {
-            snake = [{ x: 10, y: 10 }];
-            food = { x: 15, y: 15 };
-            dx = 0;
-            dy = 0;
-            score = 0;
-            document.getElementById('score').textContent = score;
-            drawGame();
-        }
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+            }, { passive: false });
 
-        // Start the game
-        drawGame();
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - touchStartX;
+                const deltaY = touch.clientY - touchStartY;
+
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX > 20 && dx === 0) { dx = 1; dy = 0; } // Right
+                    else if (deltaX < -20 && dx === 0) { dx = -1; dy = 0; } // Left
+                } else {
+                    if (deltaY > 20 && dy === 0) { dx = 0; dy = 1; } // Down
+                    else if (deltaY < -20 && dy === 0) { dx = 0; dy = -1; } // Up
+                }
+
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+            }, { passive: false });
+
+            // Start game
+            try {
+                gameLoop = setInterval(gameStep, gameSpeed);
+                draw();
+            } catch (error) {
+                console.error('Game failed to start:', error);
+                alert('An error occurred while starting the game.');
+            }
+        })();
     </script>
 </body>
 </html>
