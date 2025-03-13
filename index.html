@@ -23,7 +23,7 @@
         #login, #content {
             text-align: center;
             padding: 20px;
-            border: 2px solid #004d00;
+            border: 2px solid #FFFFFF;
         }
         #content {
             display: none;
@@ -35,7 +35,7 @@
         input, button {
             background: #000000;
             color: #FFFFFF;
-            border: 1px solid #073501;
+            border: 1px solid #FFFFFF;
             padding: 10px;
             font-family: 'VT323', monospace;
             text-transform: uppercase;
@@ -44,77 +44,23 @@
             letter-spacing: 2px;
         }
         button:hover {
-            background: #006600;
+            background: #FFFFFF;
+            color: #000000;
             cursor: pointer;
         }
         a {
-            color: #FFFDD8;
+            color: #FFFFFF;
             text-decoration: none;
             display: block;
             margin: 15px 0;
             padding: 5px;
-            border-bottom: 1px dashed #004d00;
+            border-bottom: 1px dashed #FFFFFF;
             font-size: 18px;
         }
         a:hover {
             text-decoration: underline;
-            background: #004d00;
-        }
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(0, 57, 0, 0.1), rgba(0, 57, 0, 0.1));
-            opacity: 0.3;
-            pointer-events: none;
-            animation: flicker 0.2s infinite;
-        }
-        @keyframes flicker {
-            0% { opacity: 0.3; }
-            50% { opacity: 0.4; }
-            100% { opacity: 0.3; }
-        }
-        /* Piano Styles */
-        #piano-container {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #222;
-            padding: 10px;
-            text-align: center;
-            display: none; /* Hidden until login */
-        }
-        #keys {
-            display: flex;
-            justify-content: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            overflow-x: auto;
-        }
-        .key {
-            width: 20px;
-            height: 100px;
-            background: white;
-            border: 1px solid #000;
-            position: relative;
-            cursor: pointer;
-        }
-        .key.black {
-            width: 12px;
-            height: 60px;
-            background: black;
-            margin-left: -6px;
-            margin-right: -6px;
-            z-index: 1;
-        }
-        .key.active {
-            background: #800080; /* Purple for NOLA */
-        }
-        #play-song {
-            width: auto;
+            background: #FFFFFF;
+            color: #000000;
         }
     </style>
 </head>
@@ -127,19 +73,13 @@
         <h1>MATT SHORTALL</h1>
         <a href="https://docs.google.com/document/d/1dOGkkAwYRZWTHbnEjJf3E2rKR2l9KsMmNo3Z0m6jbqw/edit?usp=sharing" target="_blank">RESUME</a>
     </div>
-    <div id="piano-container">
-        <button id="play-song">PLAY "MISS NEW ORLEANS"</button>
-        <div id="keys"></div>
-    </div>
 
     <script>
-        // Password Check
         function checkPassword() {
             const pass = document.getElementById('pass').value.toUpperCase();
             if (pass === "GATORSNAKE") {
                 document.getElementById('login').style.display = 'none';
                 document.getElementById('content').style.display = 'flex';
-                document.getElementById('piano-container').style.display = 'block';
             } else {
                 alert('INCORRECT PASSWORD');
             }
@@ -147,73 +87,6 @@
         document.getElementById('pass').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') checkPassword();
         });
-
-        // Piano Logic
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-        const keysContainer = document.getElementById('keys');
-        let keyElements = [];
-
-        // Generate 88 keys
-        function createPiano() {
-            for (let octave = 0; octave <= 7; octave++) {
-                notes.forEach((note, index) => {
-                    const midiNote = octave * 12 + index + 21; // MIDI note 21 = A0
-                    if (midiNote > 108) return; // Stop at C8 (MIDI 108)
-                    
-                    const key = document.createElement('div');
-                    key.classList.add('key');
-                    if (note.includes('#')) key.classList.add('black');
-                    key.dataset.note = `${note}${octave}`;
-                    key.dataset.midi = midiNote;
-                    keysContainer.appendChild(key);
-                    keyElements.push(key);
-
-                    key.addEventListener('click', () => playNote(midiNote));
-                });
-            }
-        }
-
-        // Play 8-bit square wave sound
-        function playNote(midiNote) {
-            const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            oscillator.type = 'square'; // 8-bit sound
-            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.3);
-            
-            const key = keyElements[midiNote - 21];
-            key.classList.add('active');
-            setTimeout(() => key.classList.remove('active'), 300);
-        }
-
-        // Play "Do You Know What It Means to Miss New Orleans" snippet
-        function playSong() {
-            const melody = [
-                { midi: 60, duration: 500 }, // C4
-                { midi: 62, duration: 500 }, // D4
-                { midi: 64, duration: 500 }, // E4
-                { midi: 67, duration: 1000 }, // G4 (longer)
-                { midi: 65, duration: 500 }, // F4
-                { midi: 64, duration: 500 }, // E4
-            ];
-            let time = 0;
-            melody.forEach(note => {
-                setTimeout(() => playNote(note.midi), time);
-                time += note.duration);
-            });
-        }
-
-        // Initialize Piano and Song Button
-        createPiano();
-        document.getElementById('play-song').addEventListener('click', playSong);
     </script>
 </body>
 </html>
